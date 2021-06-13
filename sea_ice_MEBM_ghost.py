@@ -168,9 +168,7 @@ def model(grid, T, F=0, moist = 0, albT = 0, seas = 0, thermo = 0):
       # Implicit Euler on Tg
       if moist == 1:
 
-        # latent heat transport
-        # n.b. this is semi-implicit, with some derivatives are
-        # calculated on the previous time step
+        # Forward Euler on diffusion of latent heat
         q = RH * saturation_specific_humidity(Tg,Ps)
         rhs1 = np.matmul(dt*diffop/cg, Lv*q/cp)
 
@@ -310,6 +308,7 @@ def main():
 
   plt.tight_layout() 
   plt.show()
+
 
 if __name__ == '__main__':
   main()
