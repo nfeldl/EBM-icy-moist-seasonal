@@ -69,8 +69,8 @@ def model(grid, T, F=0, moist = 0, albT = 0, seas = 0, thermo = 0):
   elif moist==1:
     D = 0.3 # diffusivity for heat transport (W m^-2 K^-1)
   print(f'diffusivity for heat transport is {D} W m^-2 K^-1')
-  S1 = 290 # insolation seasonal dependence (W m^-2)
-  A = 195 # OLR when T = 0 (W m^-2)
+  S1 = 338 # insolation seasonal dependence (W m^-2)
+  A = 196 # OLR when T = 0 (W m^-2)
   B = 1.8 # OLR temperature dependence (W m^-2 K^-1)
   #cw = 9.8 # ocean mixed layer heat capacity (W yr m^-2 K^-1)
   cw = mixedlayer.heatcapacity(60) # ocean mixed layer heat capacity (W yr m^-2 K^-1)
@@ -173,6 +173,7 @@ def model(grid, T, F=0, moist = 0, albT = 0, seas = 0, thermo = 0):
         rhs1 = np.matmul(dt*diffop/cg, Lv*q/cp)
 
         if thermo == 1:
+        # FM21, eq. 3
           Tg = np.linalg.solve(kappa-np.diag(dc/(M-kLf/E)*(T0<0)*(E<0)),
                                Tg + rhs1 + (dt_tau*(E/cw*(E>=0)+(ai*S[i,:]-A+F)/(M-kLf/E)*(T0<0)*(E<0))))
         else:
@@ -181,6 +182,7 @@ def model(grid, T, F=0, moist = 0, albT = 0, seas = 0, thermo = 0):
 
       elif moist == 0:
         if thermo ==1:
+        #WE15, eq. A1
           Tg = np.linalg.solve(kappa-np.diag(dc/(M-kLf/E)*(T0<0)*(E<0)),
                                Tg + (dt_tau*(E/cw*(E>=0)+(ai*S[i,:]-A+F)/(M-kLf/E)*(T0<0)*(E<0))))
         else:
@@ -223,6 +225,7 @@ def main():
   x_n = x[-n_2:]
   Tfin = Tfin[-n_2:,:]
   Efin = Efin[-n_2:,:]
+  T0fin = T0fin[-n_2:,:]
 
   # seasons and ice edge
   # winter/summer occur when hemispheric T is min/max
@@ -230,6 +233,8 @@ def main():
   summer = np.argmax(np.mean(Tfin, axis=0))
   ice = np.where(Efin<0,np.expand_dims(x_n,1),1)
   xi = np.min(ice, axis=0)
+  Lf = 9.5 # sea ice latent heat of fusion (W yr m^-3)
+  icethick = -Efin/Lf*(Efin<0)
 
   # plot enthalpy (Fig 2a)
   plt.subplot(141)
@@ -237,7 +242,7 @@ def main():
   plt.contourf(tfin,x_n,Efin,clevsE)
   plt.colorbar()
   # plot ice edge on E
-  plt.plot(tfin,xi,'k')
+  plt.contour(tfin,x_n,icethick,[0],colors='k')
   plt.xlabel('t (final year)')
   plt.ylabel('x')
   plt.ylim(0,1)
@@ -248,21 +253,18 @@ def main():
   clevsT = np.arange(-30,31,5)
   plt.contourf(tfin,x_n,Tfin,clevsT)
   plt.colorbar()
-  # plot ice edge on T
-  plt.plot(tfin,xi,'k')
   # plot T=0 contour (the region between ice edge and T=0 contour is the
   # region of summer ice surface melt)
-  plt.contour(tfin,x_n,Tfin,[0],colors='r',linestyles='-')
+  plt.contour(tfin,x_n,icethick,[0],colors='k')
+  plt.contour(tfin,x_n,T0fin,[0],colors='r')
   plt.xlabel('t (final year)')
   plt.ylabel('x')
   plt.ylim(0,1)
   plt.title(r'T ($^\circ$C)')
    
   # plot the ice thickness (Fig 2c)
-  Lf = 9.5 # sea ice latent heat of fusion (W yr m^-3)
   plt.subplot(1,4,3)
   clevsh = np.arange(0.00001,5.5,0.5)
-  icethick = -Efin/Lf*(Efin<0)
   plt.contourf(tfin,x_n,icethick,clevsh)
   plt.colorbar()
   # plot ice edge on h

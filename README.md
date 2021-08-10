@@ -18,4 +18,4 @@ ebm.model(grid, Ti, F, moist = moist, albT = albT, seas = seas, thermo = thermo)
 
 ## GCM
 
-The netcdf file `GCM_results.nc` contains the results of the simulations presented in the paper. The tar file contains the source code for the idealized GCM with thermodynamic ice used in this study and described in the paper.
+The netcdf file `GCM_results.nc` contains the results of the simulations presented in the paper. The tar file contains the source code for the idealized GCM with thermodynamic ice described in the paper.
