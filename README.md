@@ -1,5 +1,5 @@
 # EBM-icy-moist-seasonal
-Code and data accompanying the paper "Polar amplification in idealized climates: the role of ice, moisture, and seasons" by Feldl and Merlis.
+Code and data accompanying the paper: Feldl, N., & Merlis, T. M. (2021). Polar amplification in idealized climates: The role of ice, moisture, and seasons. Geophysical Research Letters, 48, e2021GL094130. https://doi.org/10.1029/2021GL094130
 
 ## EBM
 
