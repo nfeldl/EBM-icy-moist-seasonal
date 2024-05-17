@@ -192,7 +192,8 @@ def model(grid, T, F=0, moist = 0, albT = 0, seas = 0, thermo = 0):
   print(f'{np.mean(Tfin, axis=(0,1))} global mean temp')
   print(f'{np.ptp(np.mean(Tfin, axis=1))} equator-pole temp difference')
   print(f'{np.mean(S, axis=(0,1))} global mean annual mean inso')
-  print(f'{np.mean(ASRfin, axis=(0,1)) - A - B*np.mean(Tfin, axis=(0,1))} energy balance')
+  energybal = np.mean(ASRfin - A - B*Tfin + F + Fb, axis=(0,1))
+  print(f'{energybal} energy balance')
 
   return tfin, Efin, Tfin, T0fin, ASRfin
 
